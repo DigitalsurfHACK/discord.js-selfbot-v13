@@ -1,3 +1,6 @@
+"use strict";
+
+const process = require("node:process");
 const { Client } = require("./src/index.js");
 
 const client = new Client({
