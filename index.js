@@ -7,6 +7,9 @@ const client = new Client({
   checkUpdate: false
 });
 
+const USER_ID = process.env.USER_ID;
+const CHANNEL_ID = process.env.CHANNEL_ID;
+
 let isOnline = false;
 
 client.on("ready", async () => {
@@ -15,11 +18,11 @@ client.on("ready", async () => {
   if (isOnline) return;
   isOnline = true;
 
-  const channel = client.channels.cache.get(process.env.CHANNEL_ID);
+  const channel = client.channels.cache.get(CHANNEL_ID);
   if (!channel) return;
 
   channel.send(
-    `🟢 **${client.user.username} is now ONLINE**`
+    `🟢 **User Online**\n<@${USER_ID}> is now **ONLINE**`
   );
 });
 
@@ -27,16 +30,17 @@ client.on("disconnect", async () => {
   if (!isOnline) return;
   isOnline = false;
 
-  const channel = client.channels.cache.get(process.env.CHANNEL_ID);
+  const channel = client.channels.cache.get(CHANNEL_ID);
   if (!channel) return;
 
   channel.send(
-    `⚫ **${client.user.username} went OFFLINE**`
+    `⚫ **User Offline**\n<@${USER_ID}> is now **OFFLINE**`
   );
 });
 
-// Prevent crashes from internal errors
+// Prevent Railway crash loops
 client.on("error", () => {});
 client.on("shardError", () => {});
+client.on("warn", () => {});
 
 client.login(process.env.TOKEN);
