@@ -1,10 +1,10 @@
-const { Client } = require("discord.js-selfbot-v13");
+const { Client } = require("./src/index.js");
 
 const client = new Client({
   checkUpdate: false
 });
 
-client.on("ready", () => {
+client.once("ready", () => {
   console.log(`Logged in as ${client.user.username}`);
 });
 
