@@ -7,14 +7,11 @@ const client = new Client({
   checkUpdate: false
 });
 
-// Track last known status
 let lastStatus = null;
 
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.username}`);
-
   lastStatus = client.user.presence?.status ?? "offline";
-  console.log("Initial status:", lastStatus);
 });
 
 client.on("presenceUpdate", async (oldPresence, newPresence) => {
@@ -28,7 +25,7 @@ client.on("presenceUpdate", async (oldPresence, newPresence) => {
 
   try {
     const channel = await client.channels.fetch(process.env.CHANNEL_ID);
-    if (!channel || !channel.send) return;
+    if (!channel?.send) return;
 
     const statusText = {
       online: "🟢 **ONLINE**",
@@ -38,12 +35,12 @@ client.on("presenceUpdate", async (oldPresence, newPresence) => {
     };
 
     await channel.send(
-      ' **Status Update**\n<@${client.user.id}> is now ${statusText[newStatus] || newStatus}`
+      ` **Status Update**\n<@${client.user.id}> is now ${statusText[newStatus] || newStatus}`
     );
 
-    console.log(`Status changed → ${newStatus}`);
+    console.log("Status changed →", newStatus);
   } catch (err) {
-    console.error("Failed to send status message:", err.message);
+    console.error("Send failed:", err.message);
   }
 });
 
