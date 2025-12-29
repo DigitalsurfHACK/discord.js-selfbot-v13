@@ -7,43 +7,36 @@ const client = new Client({
   checkUpdate: false
 });
 
-let lastStatus = null;
+let isOnline = false;
 
-client.once("ready", async () => {
+client.on("ready", async () => {
   console.log(`Logged in as ${client.user.username}`);
 
-  // initial status
-  lastStatus = client.user.presence?.status ?? "offline";
+  if (isOnline) return;
+  isOnline = true;
 
-  setInterval(async () => {
-    try {
-      // force presence refresh
-      const me = await client.users.fetch(client.user.id, { force: true });
-      const newStatus = me.presence?.status ?? "offline";
+  const channel = client.channels.cache.get(process.env.CHANNEL_ID);
+  if (!channel) return;
 
-      if (newStatus === lastStatus) return;
-
-      console.log(`Status changed: ${lastStatus} → ${newStatus}`);
-      lastStatus = newStatus;
-
-      const channel = await client.channels.fetch(process.env.CHANNEL_ID);
-      if (!channel?.send) return;
-
-      const statusText = {
-        online: "🟢 ONLINE",
-        idle: "🌙 IDLE",
-        dnd: "⛔ DND",
-        offline: "⚫ OFFLINE"
-      };
-
-      await channel.send(
-        `**Status Update**\n<@${client.user.id}> is now **${statusText[newStatus] || newStatus}**`
-      );
-
-    } catch (err) {
-      console.error("Status check failed:", err.message);
-    }
-  }, 15000); // check every 15 seconds
+  channel.send(
+    `🟢 **${client.user.username} is now ONLINE**`
+  );
 });
+
+client.on("disconnect", async () => {
+  if (!isOnline) return;
+  isOnline = false;
+
+  const channel = client.channels.cache.get(process.env.CHANNEL_ID);
+  if (!channel) return;
+
+  channel.send(
+    `⚫ **${client.user.username} went OFFLINE**`
+  );
+});
+
+// Prevent crashes from internal errors
+client.on("error", () => {});
+client.on("shardError", () => {});
 
 client.login(process.env.TOKEN);
