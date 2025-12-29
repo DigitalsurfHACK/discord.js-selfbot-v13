@@ -5,6 +5,7 @@
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
   "scripts": {
+    "start": "node index.js",
     "all": "npm run build && npm publish",
     "test": "npm run lint:all && npm run docs:test && npm run test:typescript",
     "fix:all": "npm run lint:fix && npm run lint:typings:fix && npm run format",
@@ -14,7 +15,7 @@
     "lint:typings": "tslint typings/index.d.ts",
     "lint:typings:fix": "tslint typings/index.d.ts --fix",
     "format": "prettier --write src/**/*.js typings/**/*.ts",
-    "lint:all": "npm run lint &&  npm run lint:typings",
+    "lint:all": "npm run lint && npm run lint:typings",
     "docs": "docgen --source src --custom docs/index.yml --output docs/main.json",
     "docs:test": "docgen --source src --custom docs/index.yml",
     "build": "npm run lint:fix && npm run lint:typings:fix && npm run format && npm run docs"
