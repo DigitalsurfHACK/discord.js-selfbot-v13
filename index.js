@@ -37,7 +37,7 @@ client.once("ready", async () => {
       };
 
       await channel.send(
-        `📡 **Status Update**\n<@${client.user.id}> is now **${statusText[newStatus] || newStatus}**`
+        `**Status Update**\n<@${client.user.id}> is now **${statusText[newStatus] || newStatus}**`
       );
 
     } catch (err) {
